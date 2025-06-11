@@ -43,7 +43,6 @@ lib_deps =
 ```cpp
 #include <AD7606p16_t4.h>
 
-// Data pins are now hardcoded in the library for optimal performance
 AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_PIN, BUSY_PIN, RESET_PIN);
 
 uint16_t channels[8];

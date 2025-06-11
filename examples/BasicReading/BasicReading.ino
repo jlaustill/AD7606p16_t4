@@ -10,13 +10,15 @@
  * - Teensy 4.1, or MicroMod
  * - AD7606 ADC connected in 16-bit parallel mode
  * 
- * Pin Configuration (modify as needed):
- * - Data pins D0-D15: pins 40,41,37,36,35,34,39,38,24,25,14,15,23,20,21,16 // these can't be changed
+ * Pin Configuration:
+ * - Data pins D0-D15: pins 40,41,37,36,35,34,39,38,24,25,14,15,23,20,21,16 (hardcoded in library)
  * - RD: pin 3
  * - CS: pin 4  
  * - CONVST: pin 6
  * - BUSY: pin 27
  * - RESET: pin 5
+ * 
+ * Note: Data pins are hardcoded for optimal GPIO port performance and cannot be changed.
  */
 
 #include <AD7606p16_t4.h>
@@ -27,9 +29,6 @@
 #define CONV_START_PIN 6
 #define RD_PIN 3
 #define CS_PIN 4
-
-// Data pins D0-D15 are now hardcoded in the library for optimal performance
-// Pins: 40,41,37,36,35,34,39,38,24,25,14,15,23,20,21,16
 
 // Create AD7606 instance
 AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_START_PIN, BUSY_PIN, RESET_PIN);
