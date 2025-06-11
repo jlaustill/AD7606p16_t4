@@ -1,0 +1,53 @@
+{
+  "name": "AD7606p16_t4",
+  "version": "0.0.1",
+  "description": "High-speed 16-bit parallel AD7606 ADC library for Teensy 4.x using optimized GPIO port reading",
+  "keywords": [
+    "AD7606",
+    "ADC",
+    "parallel",
+    "teensy",
+    "teensy4",
+    "high-speed",
+    "16-bit",
+    "gpio",
+    "data-acquisition"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jlaustill/AD7606p16_t4.git"
+  },
+  "authors": [
+    {
+      "name": "Joshua Austill",
+      "email": "jlaustill@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/jlaustill/AD7606p16_t4",
+  "dependencies": [],
+  "frameworks": [
+    "arduino"
+  ],
+  "platforms": [
+    "teensy"
+  ],
+  "headers": "AD7606p16_t4.h",
+  "examples": [
+    {
+      "name": "BasicReading",
+      "base": "examples/BasicReading",
+      "files": [
+        "BasicReading.ino"
+      ]
+    }
+  ],
+  "export": {
+    "exclude": [
+      "tests",
+      "docs",
+      ".github"
+    ]
+  }
+}
