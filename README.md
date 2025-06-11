@@ -43,9 +43,7 @@ lib_deps =
 ```cpp
 #include <AD7606p16_t4.h>
 
-// These are hard coded to avoid using the first two canbus ports, i2c, and SPI, but it is a lot of pins lol
-uint8_t dataPins[16] = {40,41,37,36,35,34,39,38,24,25,14,15,23,20,21,16};
-AD7606p16_t4 adc(dataPins, RD_PIN, CS_PIN, CONV_PIN, BUSY_PIN, RESET_PIN);
+AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_PIN, BUSY_PIN, RESET_PIN);
 
 uint16_t channels[8];
 
