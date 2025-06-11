@@ -2,9 +2,11 @@
 
 AD7606p16_t4* AD7606p16_t4::instance = nullptr;
 
-AD7606p16_t4::AD7606p16_t4(uint8_t D0_D15[16], uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET) {
+const uint8_t AD7606p16_t4::DATA_PINS[16] = {40,41,37,36,35,34,39,38,24,25,14,15,23,20,21,16};
+
+AD7606p16_t4::AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET) {
     for (uint8_t i = 0; i < 16; i++) {
-        this->D0_D15[i] = D0_D15[i];
+        this->D0_D15[i] = DATA_PINS[i];
     }
     this->RD = RD;
     this->CS = CS;

@@ -3,7 +3,8 @@
 
 class AD7606p16_t4 {
     public:
-        AD7606p16_t4(uint8_t D0_D15[16], uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET);
+        static const uint8_t DATA_PINS[16];
+        AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET);
         void getData(uint16_t* data);
         void reset();
 

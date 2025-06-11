@@ -28,11 +28,11 @@
 #define RD_PIN 3
 #define CS_PIN 4
 
-// Data pins D0-D15 (modify these to match your wiring)
-uint8_t dataPins[16] = {40, 41, 37, 36, 35, 34, 39, 38, 24, 25, 14, 15, 23, 20, 21, 16};
+// Data pins D0-D15 are now hardcoded in the library for optimal performance
+// Pins: 40,41,37,36,35,34,39,38,24,25,14,15,23,20,21,16
 
 // Create AD7606 instance
-AD7606p16_t4 adc(dataPins, RD_PIN, CS_PIN, CONV_START_PIN, BUSY_PIN, RESET_PIN);
+AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_START_PIN, BUSY_PIN, RESET_PIN);
 
 // Buffer to hold channel data
 uint16_t channelData[8];
