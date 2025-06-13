@@ -11,7 +11,7 @@
  * - AD7606 ADC connected in 16-bit parallel mode
  * 
  * Pin Configuration:
- * - Data pins D0-D15: pins 40,41,37,36,35,34,39,38,24,25,14,15,23,20,21,16 (hardcoded in library)
+ * - Data pins D0-D15: See README.md pin table for exact mappings (hardcoded in library)
  * - RD: pin 3
  * - CS: pin 4  
  * - CONVST: pin 6

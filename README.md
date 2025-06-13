@@ -57,7 +57,25 @@ void loop() {
 The library uses optimized GPIO port mapping for maximum speed:
 
 ### Data Pins (D0-D15)
-TODO, make a table representing the pins
+
+| Data Pin | Teensy4.1 Pin | Teensy4.1 GPIO | TeensyMM Pin | TeensyMM GPIO |
+|----------|---------------|----------------|--------------|---------------|
+| D0       | 19            | GPIO6.16       | 37           | GPIO8.12      |
+| D1       | 18            | GPIO6.17       | 36           | GPIO8.13      |
+| D2       | 14            | GPIO6.18       | 35           | GPIO8.14      |
+| D3       | 15            | GPIO6.19       | 34           | GPIO8.15      |
+| D4       | 40            | GPIO6.20       | 38           | GPIO8.16      |
+| D5       | 41            | GPIO6.21       | 39           | GPIO8.17      |
+| D6       | 17            | GPIO6.22       | 40           | GPIO7.4       |
+| D7       | 16            | GPIO6.23       | 41           | GPIO7.5       |
+| D8       | 22            | GPIO6.24       | 42           | GPIO7.6       |
+| D9       | 23            | GPIO6.25       | 43           | GPIO7.7       |
+| D10      | 20            | GPIO6.26       | 44           | GPIO7.8       |
+| D11      | 21            | GPIO6.27       | 45           | GPIO7.9       |
+| D12      | 38            | GPIO6.28       | 63           | GPIO7.10      |
+| D13      | 39            | GPIO6.29       | 9            | GPIO7.11      |
+| D14      | 26            | GPIO6.30       | 32           | GPIO7.12      |
+| D15      | 27            | GPIO6.31       | 8            | GPIO7.16      |
 
 ### Control Pins
 - **RD**: Read signal (any available pin)
