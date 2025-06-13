@@ -109,7 +109,7 @@ void AD7606p16_t4::busyFallingISR() {
         for (uint8_t channel = 0; channel < 8; channel++) {
             if (channel > 0) instance->pulse(instance->RD); // Pulse the RD pin to read data
 
-            uint16_t data = 0; // Initialize data to 0
+            int16_t data = 0; // Initialize data to 0
 
             #ifdef ARDUINO_TEENSY41
                 data = (GPIO6_PSR >> 16) & 0b1111111111111111; // Read D0-D15 from GPIO6
@@ -120,10 +120,10 @@ void AD7606p16_t4::busyFallingISR() {
             #else 
                 #error
             #endif
-            instance->channels[channel] = (int16_t)(data); // Store the read data in the channels array
+            instance->channels[channel] = data; // Store the read data in the channels array
         }
         interrupts(); // Re-enable interrupts
-        
+
         digitalWriteFast(instance->CS, HIGH); // Disable data read
         instance->startConversion(); // Pulse the RD pin to read data
     }
