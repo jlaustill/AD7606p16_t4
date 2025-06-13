@@ -4,7 +4,7 @@
 class AD7606p16_t4 {
     public:
         AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET);
-        void getData(uint16_t* data);
+        void getData(int16_t* data);
         void reset();
 
     private:
@@ -20,7 +20,7 @@ class AD7606p16_t4 {
         uint8_t BUSY;       // Busy pin
         uint8_t RESET;      // Reset pin
 
-        volatile uint16_t channels[8]; // Array to hold the 8 channels data
+        volatile int16_t channels[8]; // Array to hold the 8 channels data
         static void busyFallingISR();
         static AD7606p16_t4* instance; // Instance pointer for ISR
 };

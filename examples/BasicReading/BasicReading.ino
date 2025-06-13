@@ -24,9 +24,9 @@
 #include <AD7606p16_t4.h>
 
 // Define your pin connections for the AD7606
-#define BUSY_PIN 27
+#define BUSY_PIN 29
 #define RESET_PIN 5
-#define CONV_START_PIN 6
+#define CONV_START_PIN 33
 #define RD_PIN 3
 #define CS_PIN 4
 
