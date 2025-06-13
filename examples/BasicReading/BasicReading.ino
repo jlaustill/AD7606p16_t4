@@ -62,7 +62,7 @@ void loop() {
         
         Serial.print("Raw values: ");
         for (int i = 0; i < 8; i++) {
-            Serial.print(channelData[i]);
+            Serial.print((channelData[i] * 5.0f) / 32768.0f, 3); // Convert to voltage (assuming 5V reference);
             if (i < 7) Serial.print(", ");
         }
         Serial.println();
