@@ -34,7 +34,7 @@
 AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_START_PIN, BUSY_PIN, RESET_PIN);
 
 // Buffer to hold channel data
-uint16_t channelData[8];
+int16_t channelData[8];
 
 // Timing variables
 unsigned long lastPrint = 0;

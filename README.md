@@ -4,9 +4,9 @@ High-speed 16-bit parallel AD7606 ADC library for Teensy 4.x
 
 ## Features
 
-🚀 **Ultra-High Performance**: 200K+ conversions per second  
-⚡ **Optimized GPIO Access**: Direct port register reading (2 reads + 5 operations)  
-🎯 **Teensy 4.x Optimized**: Leverages GPIO6 & GPIO8 fast ports  
+🚀 **Ultra-High Performance**: 200 kSPS per second  
+⚡ **Optimized GPIO Access**: Direct port register reading
+🎯 **Teensy 4.x Optimized**: Leverages GPIO6, GPIO7 & GPIO8 fast ports  
 📊 **8-Channel Simultaneous**: All 8 AD7606 channels read in parallel  
 🔧 **Easy Integration**: Drop-in replacement for slower bit-banging approaches  
 
@@ -15,7 +15,7 @@ High-speed 16-bit parallel AD7606 ADC library for Teensy 4.x
 | Method | Speed | CPU Usage |
 |--------|-------|-----------|
 | Individual `digitalRead()` | ~1K/sec | High (lockups) |
-| **AD7606p16_t4** | **200K+/sec** | **Minimal** |
+| **AD7606p16_t4** | **200 kSPS** | **Minimal** |
 
 ## Hardware Requirements
 
@@ -45,13 +45,10 @@ lib_deps =
 
 AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_PIN, BUSY_PIN, RESET_PIN);
 
-uint16_t channels[8];
+int16_t channels[8];
 
 void loop() {
     adc.getData(channels);  // Get latest readings
-    
-    // Convert to voltage
-    float voltage = AD7606p16_t4::rawToVoltage(channels[0]); // ±5V range
 }
 ```
 
@@ -60,9 +57,7 @@ void loop() {
 The library uses optimized GPIO port mapping for maximum speed:
 
 ### Data Pins (D0-D15)
-**Recommended pins for best performance:**
-- **GPIO8**: Pins 40,41,37,36,35,34,39,38 (D0-D7)
-- **GPIO6**: Pins 24,25,14,15,23,20,21,16 (D8-D15)
+TODO, make a table representing the pins
 
 ### Control Pins
 - **RD**: Read signal (any available pin)
@@ -83,16 +78,15 @@ for (int i = 0; i < 16; i++) {
 
 **AD7606p16_t4** reads entire GPIO ports simultaneously:
 ```cpp
-// FAST: 2 port reads + bit extraction
-uint32_t gpio6 = GPIO6_PSR;  // Read all GPIO6 pins at once
-uint32_t gpio8 = GPIO8_PSR;  // Read all GPIO8 pins at once
+// FAST: 1 port reads + bit extraction
+data = (GPIO6_PSR >> 16) & 0b1111111111111111; // Read D0-D15 from GPIO6
 // Extract bits with optimized operations
 ```
 
-## Performance Tips
+## Performance Goals
 
 1. **Minimize ISR duration** - library handles this automatically
-2. **Call `getData()` regularly** to get latest readings
+2. **Ability to Call `getData()` regularly** to get latest readings
 
 ## Supported Boards
 
