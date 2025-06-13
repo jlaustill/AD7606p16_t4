@@ -3,10 +3,46 @@
 AD7606p16_t4* AD7606p16_t4::instance = nullptr;
 
 AD7606p16_t4::AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET) {
-    this->D0_D15[0] = 40; this->D0_D15[1] = 41; this->D0_D15[2] = 37; this->D0_D15[3] = 36;
-    this->D0_D15[4] = 35; this->D0_D15[5] = 34; this->D0_D15[6] = 39; this->D0_D15[7] = 38;
-    this->D0_D15[8] = 24; this->D0_D15[9] = 25; this->D0_D15[10] = 14; this->D0_D15[11] = 15;
-    this->D0_D15[12] = 23; this->D0_D15[13] = 20; this->D0_D15[14] = 21; this->D0_D15[15] = 16;
+    #ifdef ARDUINO_TEENSY41
+        // Teensy 4.1: GPIO6[16:31] consecutive bits
+        // D0-D15 map to GPIO6 bits 16-31
+        this->D0_D15[0] = 19;  // GPIO6.16
+        this->D0_D15[1] = 18;  // GPIO6.17  
+        this->D0_D15[2] = 14;  // GPIO6.18
+        this->D0_D15[3] = 15;  // GPIO6.19
+        this->D0_D15[4] = 40;  // GPIO6.20
+        this->D0_D15[5] = 41;  // GPIO6.21
+        this->D0_D15[6] = 17;  // GPIO6.22
+        this->D0_D15[7] = 16;  // GPIO6.23
+        this->D0_D15[8] = 22;  // GPIO6.24
+        this->D0_D15[9] = 23;  // GPIO6.25
+        this->D0_D15[10] = 20; // GPIO6.26
+        this->D0_D15[11] = 21; // GPIO6.27
+        this->D0_D15[12] = 38; // GPIO6.28
+        this->D0_D15[13] = 39; // GPIO6.29
+        this->D0_D15[14] = 26; // GPIO6.30
+        this->D0_D15[15] = 27; // GPIO6.31
+        
+    #elif defined(ARDUINO_TEENSY_MICROMOD)
+        this->D0_D15[0] = 37;
+        this->D0_D15[1] = 36;
+        this->D0_D15[2] = 35;
+        this->D0_D15[3] = 34;
+        this->D0_D15[4] = 38;
+        this->D0_D15[5] = 39; 
+        this->D0_D15[6] = 40; 
+        this->D0_D15[7] = 41;
+        this->D0_D15[8] = 42; 
+        this->D0_D15[9] = 43; 
+        this->D0_D15[10] = 44; 
+        this->D0_D15[11] = 45;
+        this->D0_D15[12] = 63; 
+        this->D0_D15[13] = 9; 
+        this->D0_D15[14] = 32; 
+        this->D0_D15[15] = 8;
+    #else
+        #error "Unsupported board."
+    #endif
     this->RD = RD;
     this->CS = CS;
     this->CONVERSION_START = CONVERSION_START;
@@ -67,31 +103,33 @@ void AD7606p16_t4::startConversion()
 
 void AD7606p16_t4::busyFallingISR() {
     if (instance) {
+        digitalWriteFast(instance->CS, LOW); // Enable data read
         
         noInterrupts(); // Disable interrupts to ensure atomic read
-        digitalWriteFast(instance->CS, LOW); // Enable data read
         for (uint8_t channel = 0; channel < 8; channel++) {
-            instance->pulse(instance->RD); // Pulse the RD pin to read data
-        
-            uint32_t gpio6 = GPIO6_DR; // Read GPIO6 GDIR register
-            uint32_t gpio8 = GPIO8_DR; // Read GPIO8 GDIR register
+            if (channel > 0) instance->pulse(instance->RD); // Pulse the RD pin to read data
 
-            uint16_t data = (gpio8 >> 10) & 0b0000000011111111; // Read D0-D7 from GPIO8
-            data |= ((gpio6 >> 12) << 8)  & 0b0000001100000000; // Read D8-D9 from GPIO6
-            data |= ((gpio6 >> 18) << 10) & 0b0000110000000000; // Read D10-D11 from GPIO6
-            data |= ((gpio6 >> 25) << 12) & 0b0111000000000000; // Read D12-D14 from GPIO6
-            data |= ((gpio6 >> 23) << 15) & 0b1000000000000000; // Read D15 from GPIO6
+            uint16_t data = 0; // Initialize data to 0
 
-            instance->channels[channel] = data; // Store the read data in the channels array
+            #ifdef ARDUINO_TEENSY41
+                data = (GPIO6_PSR >> 16) & 0b1111111111111111; // Read D0-D15 from GPIO6
+            #elif defined(ARDUINO_TEENSY_MICROMOD)
+                data = (GPIO8_PSR >> 12) &   0b0000000000111111; // Read D0-D5 from GPIO8
+                data |= ((GPIO7_PSR >> 4) &  0b0000000111111111) << 6; // Read D6-D14 from GPIO7
+                data |= ((GPIO7_PSR >> 16) & 0b0000000000000001) << 15; // Read D15 from GPIO7
+            #else 
+                #error
+            #endif
+            instance->channels[channel] = (int16_t)(data); // Store the read data in the channels array
         }
-
-        instance->iPulse(instance->CONVERSION_START); // Pulse the RD pin to read data
-        digitalWriteFast(instance->CS, HIGH); // Disable data read
         interrupts(); // Re-enable interrupts
+        
+        digitalWriteFast(instance->CS, HIGH); // Disable data read
+        instance->startConversion(); // Pulse the RD pin to read data
     }
 }
 
-void AD7606p16_t4::getData(uint16_t* data) {
+void AD7606p16_t4::getData(int16_t* data) {
     noInterrupts(); // Disable interrupts to ensure atomic read
     for (uint8_t i = 0; i < 8; i++) {
         data[i] = instance->channels[i];
