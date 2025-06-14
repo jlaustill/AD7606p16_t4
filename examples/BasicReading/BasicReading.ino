@@ -35,6 +35,7 @@ AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_START_PIN, BUSY_PIN, RESET_PIN);
 
 // Buffer to hold channel data
 int16_t channelData[8];
+float voltageData[8];
 
 // Timing variables
 unsigned long lastPrint = 0;
@@ -53,6 +54,7 @@ void setup() {
 void loop() {
     // Read data from AD7606 (non-blocking, ISR-driven)
     adc.getData(channelData);
+    adc.getVoltages(voltageData);
     loopCount++;
     
     // Print results every second
@@ -60,9 +62,16 @@ void loop() {
         Serial.print("Loops/sec: ");
         Serial.println(loopCount);
         
-        Serial.print("Raw values: ");
+        Serial.print("Voltages (V): ");
         for (int i = 0; i < 8; i++) {
-            Serial.print((channelData[i] * 5.0f) / 32768.0f, 3); // Convert to voltage (assuming 5V reference);
+            Serial.print(voltageData[i], 3);
+            if (i < 7) Serial.print(", ");
+        }
+        Serial.println();
+        
+        Serial.print("Individual voltage reads: ");
+        for (int i = 0; i < 8; i++) {
+            Serial.print(adc.getVoltage(i), 3);
             if (i < 7) Serial.print(", ");
         }
         Serial.println();

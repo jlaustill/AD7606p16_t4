@@ -46,9 +46,13 @@ lib_deps =
 AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_PIN, BUSY_PIN, RESET_PIN);
 
 int16_t channels[8];
+float voltages[8];
 
 void loop() {
-    adc.getData(channels);  // Get latest readings
+    adc.getData(channels);      // Get raw 16-bit readings
+    adc.getVoltages(voltages);  // Get all voltages at once
+    
+    float ch0_voltage = adc.getVoltage(0);  // Get single channel voltage
 }
 ```
 
@@ -100,6 +104,35 @@ for (int i = 0; i < 16; i++) {
 data = (GPIO6_PSR >> 16) & 0b1111111111111111; // Read D0-D15 from GPIO6
 // Extract bits with optimized operations
 ```
+
+## API Reference
+
+### Methods
+
+#### `void getData(int16_t* data)`
+Gets raw 16-bit ADC readings for all 8 channels.
+- **Parameters**: `data` - Array of 8 int16_t values to store readings
+- **Returns**: None
+- **Thread-safe**: Yes (uses interrupt disabling)
+
+#### `float getVoltage(uint8_t channel)`
+Gets voltage reading for a single channel.
+- **Parameters**: `channel` - Channel number (0-7)
+- **Returns**: Voltage as float (assumes 5V reference)
+- **Thread-safe**: Yes (uses interrupt disabling)
+- **Note**: Returns 0.0f for invalid channel numbers
+
+#### `void getVoltages(float* voltages)`
+Gets voltage readings for all 8 channels at once.
+- **Parameters**: `voltages` - Array of 8 float values to store voltages
+- **Returns**: None
+- **Thread-safe**: Yes (uses interrupt disabling)
+- **Note**: Assumes 5V reference voltage
+
+#### `void reset()`
+Performs hardware reset of the AD7606.
+- **Parameters**: None
+- **Returns**: None
 
 ## Performance Goals
 

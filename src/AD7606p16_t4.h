@@ -5,6 +5,8 @@ class AD7606p16_t4 {
     public:
         AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET);
         void getData(int16_t* data);
+        float getVoltage(uint8_t channel);
+        void getVoltages(float* voltages);
         void reset();
 
     private:
