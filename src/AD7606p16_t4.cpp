@@ -108,19 +108,21 @@ void AD7606p16_t4::busyFallingISR() {
         noInterrupts(); // Disable interrupts to ensure atomic read
         for (uint8_t channel = 0; channel < 8; channel++) {
             if (channel > 0) instance->pulse(instance->RD); // Pulse the RD pin to read data
-
-            int16_t data = 0; // Initialize data to 0
+            
+            uint16_t raw = 0;
 
             #ifdef ARDUINO_TEENSY41
-                data = (GPIO6_PSR >> 16) & 0b1111111111111111; // Read D0-D15 from GPIO6
+                raw = (GPIO6_PSR >> 16) & 0xFFFF;
             #elif defined(ARDUINO_TEENSY_MICROMOD)
-                data = (GPIO8_PSR >> 12) &   0b0000000000111111; // Read D0-D5 from GPIO8
-                data |= ((GPIO7_PSR >> 4) &  0b0000000111111111) << 6; // Read D6-D14 from GPIO7
-                data |= ((GPIO7_PSR >> 16) & 0b0000000000000001) << 15; // Read D15 from GPIO7
+                raw = (GPIO8_PSR >> 12) & 0b0000000000111111;           // D0–D5
+                raw |= ((GPIO7_PSR >> 4) & 0b0000000111111111) << 6;    // D6–D14
+                raw |= ((GPIO7_PSR >> 16) & 0b1) << 15;                 // D15
             #else 
-                #error
+                #error "Unsupported board"
             #endif
-            instance->channels[channel] = data; // Store the read data in the channels array
+
+            int16_t data = static_cast<int16_t>(raw);
+            instance->channels[channel] = data;
         }
         interrupts(); // Re-enable interrupts
 
