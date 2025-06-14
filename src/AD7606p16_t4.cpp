@@ -138,3 +138,21 @@ void AD7606p16_t4::getData(int16_t* data) {
     }
     interrupts(); // Re-enable interrupts
 }
+
+float AD7606p16_t4::getVoltage(uint8_t channel) {
+    if (channel >= 8) return 0.0f; // Invalid channel
+    
+    noInterrupts(); // Disable interrupts to ensure atomic read
+    int16_t rawValue = instance->channels[channel];
+    interrupts(); // Re-enable interrupts
+    
+    return (rawValue * 5.0f) / 32768.0f;
+}
+
+void AD7606p16_t4::getVoltages(float* voltages) {
+    noInterrupts(); // Disable interrupts to ensure atomic read
+    for (uint8_t i = 0; i < 8; i++) {
+        voltages[i] = (instance->channels[i] * 5.0f) / 32768.0f;
+    }
+    interrupts(); // Re-enable interrupts
+}
