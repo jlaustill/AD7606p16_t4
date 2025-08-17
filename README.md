@@ -43,7 +43,11 @@ lib_deps =
 ```cpp
 #include <AD7606p16_t4.h>
 
+// Default constructor (10V reference for ±5V range)
 AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_PIN, BUSY_PIN, RESET_PIN);
+
+// Custom reference voltage (20V for ±10V range)
+// AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_PIN, BUSY_PIN, RESET_PIN, 20.0f);
 
 int16_t channels[8];
 float voltages[8];
@@ -118,7 +122,7 @@ Gets raw 16-bit ADC readings for all 8 channels.
 #### `float getVoltage(uint8_t channel)`
 Gets voltage reading for a single channel.
 - **Parameters**: `channel` - Channel number (0-7)
-- **Returns**: Voltage as float (assumes 5V reference)
+- **Returns**: Voltage as float (uses configured vRef)
 - **Thread-safe**: Yes (uses interrupt disabling)
 - **Note**: Returns 0.0f for invalid channel numbers
 
@@ -127,7 +131,7 @@ Gets voltage readings for all 8 channels at once.
 - **Parameters**: `voltages` - Array of 8 float values to store voltages
 - **Returns**: None
 - **Thread-safe**: Yes (uses interrupt disabling)
-- **Note**: Assumes 5V reference voltage
+- **Note**: Uses configured reference voltage from constructor
 
 #### `void reset()`
 Performs hardware reset of the AD7606.
@@ -157,6 +161,12 @@ MIT License - see [LICENSE](LICENSE) file
 Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Changelog
+
+### v0.1.0 
+- **BREAKING**: Add configurable vRef parameter to constructor (defaults to 10V)
+- **FIX**: Correct voltage calculation formula (was reading half the actual voltage)
+- **FIX**: Proper 2's complement handling for signed 16-bit values
+- Remove debug code from ISR for better performance
 
 ### v0.0.1 (Initial Release)
 - High-speed GPIO port reading implementation

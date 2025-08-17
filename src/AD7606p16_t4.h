@@ -3,7 +3,7 @@
 
 class AD7606p16_t4 {
     public:
-        AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET);
+        AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET, float vRef = 10.0f);
         void getData(int16_t* data);
         float getVoltage(uint8_t channel);
         void getVoltages(float* voltages);
@@ -23,6 +23,7 @@ class AD7606p16_t4 {
         uint8_t RESET;      // Reset pin
 
         volatile int16_t channels[8]; // Array to hold the 8 channels data
+        float vRef; // Reference voltage (default 10V for ±5V range)
         static void busyFallingISR();
         static AD7606p16_t4* instance; // Instance pointer for ISR
 };
