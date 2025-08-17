@@ -30,8 +30,11 @@
 #define RD_PIN 3
 #define CS_PIN 4
 
-// Create AD7606 instance
+// Create AD7606 instance with default 10V reference (±5V range)
 AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_START_PIN, BUSY_PIN, RESET_PIN);
+
+// For ±10V range, use 20V reference:
+// AD7606p16_t4 adc(RD_PIN, CS_PIN, CONV_START_PIN, BUSY_PIN, RESET_PIN, 20.0f);
 
 // Buffer to hold channel data
 int16_t channelData[8];

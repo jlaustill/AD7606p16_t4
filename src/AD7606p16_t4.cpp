@@ -2,7 +2,7 @@
 
 AD7606p16_t4* AD7606p16_t4::instance = nullptr;
 
-AD7606p16_t4::AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET) {
+AD7606p16_t4::AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET, float vRef) {
     #ifdef ARDUINO_TEENSY41
         // Teensy 4.1: GPIO6[16:31] consecutive bits
         // D0-D15 map to GPIO6 bits 16-31
@@ -48,6 +48,7 @@ AD7606p16_t4::AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uin
     this->CONVERSION_START = CONVERSION_START;
     this->BUSY = BUSY;
     this->RESET = RESET;
+    this->vRef = vRef;
 
     for (uint8_t i = 0; i < 8; i++) {
         this->channels[i] = 0; // Initialize channels to 0
@@ -146,13 +147,13 @@ float AD7606p16_t4::getVoltage(uint8_t channel) {
     int16_t rawValue = instance->channels[channel];
     interrupts(); // Re-enable interrupts
     
-    return (rawValue * 5.0f) / 32768.0f;
+    return (rawValue * instance->vRef) / 65536.0f;
 }
 
 void AD7606p16_t4::getVoltages(float* voltages) {
     noInterrupts(); // Disable interrupts to ensure atomic read
     for (uint8_t i = 0; i < 8; i++) {
-        voltages[i] = (instance->channels[i] * 5.0f) / 32768.0f;
+        voltages[i] = (instance->channels[i] * instance->vRef) / 65536.0f;
     }
     interrupts(); // Re-enable interrupts
 }
