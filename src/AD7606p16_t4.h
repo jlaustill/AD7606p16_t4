@@ -26,4 +26,5 @@ class AD7606p16_t4 {
         float vRef; // Reference voltage (default 10V for ±5V range)
         static void busyFallingISR();
         static AD7606p16_t4* instance; // Instance pointer for ISR
+        static elapsedMillis lastIsrCall; // Watchdog timer for ISR calls
 };

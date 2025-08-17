@@ -1,6 +1,7 @@
 #include "AD7606p16_t4.h"
 
 AD7606p16_t4* AD7606p16_t4::instance = nullptr;
+elapsedMillis AD7606p16_t4::lastIsrCall;
 
 AD7606p16_t4::AD7606p16_t4(uint8_t RD, uint8_t CS, uint8_t CONVERSION_START, uint8_t BUSY, uint8_t RESET, float vRef) {
     #ifdef ARDUINO_TEENSY41
@@ -86,7 +87,7 @@ void AD7606p16_t4::reset()
 void AD7606p16_t4::pulse(uint8_t pin)
 {
     digitalWriteFast(pin, HIGH);
-    delayNanoseconds(25);  // Meet minimum 25ns pulse width
+    delayNanoseconds(50);  // Longer pulse for reliable conversion start
     digitalWriteFast(pin, LOW);
 }
 
@@ -104,6 +105,7 @@ void AD7606p16_t4::startConversion()
 
 void AD7606p16_t4::busyFallingISR() {
     if (instance) {
+        lastIsrCall = 0; // Reset watchdog timer
         digitalWriteFast(instance->CS, LOW); // Enable data read
         
         noInterrupts(); // Disable interrupts to ensure atomic read
@@ -133,6 +135,9 @@ void AD7606p16_t4::busyFallingISR() {
 }
 
 void AD7606p16_t4::getData(int16_t* data) {
+    if (lastIsrCall > 10) {
+        this->reset();
+    }
     noInterrupts(); // Disable interrupts to ensure atomic read
     for (uint8_t i = 0; i < 8; i++) {
         data[i] = instance->channels[i];
@@ -143,6 +148,10 @@ void AD7606p16_t4::getData(int16_t* data) {
 float AD7606p16_t4::getVoltage(uint8_t channel) {
     if (channel >= 8) return 0.0f; // Invalid channel
     
+    if (lastIsrCall > 10) {
+        this->reset();
+    }
+    
     noInterrupts(); // Disable interrupts to ensure atomic read
     int16_t rawValue = instance->channels[channel];
     interrupts(); // Re-enable interrupts
@@ -151,6 +160,9 @@ float AD7606p16_t4::getVoltage(uint8_t channel) {
 }
 
 void AD7606p16_t4::getVoltages(float* voltages) {
+    if (lastIsrCall > 10) {
+        this->reset();
+    }
     noInterrupts(); // Disable interrupts to ensure atomic read
     for (uint8_t i = 0; i < 8; i++) {
         voltages[i] = (instance->channels[i] * instance->vRef) / 65536.0f;
