@@ -1,6 +1,6 @@
 {
   "name": "AD7606p16_t4",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "High-speed 16-bit parallel AD7606 ADC library for Teensy 4.x using optimized GPIO port reading",
   "keywords": [
     "AD7606",
